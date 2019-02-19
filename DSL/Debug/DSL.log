@@ -1,0 +1,4 @@
+﻿  main.cpp
+C:\Users\skeez\source\repos\DSL\DSL\main.cpp(361): warning C4715: executeLine: значение возвращается не при всех путях выполнения
+C:\Users\skeez\source\repos\DSL\DSL\main.cpp(297): warning C4715: declareVariable: значение возвращается не при всех путях выполнения
+  DSL.vcxproj -> C:\Users\skeez\source\repos\DSL\Debug\DSL.exe
