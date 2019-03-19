@@ -26,6 +26,13 @@ public:
 	double& operator[](string strIndeces);
 
 	Matrix(string matrix);
+	// Example:
+	// Matrix m = Matrix("[[1,2,3]]")
+	// m.get(0,0) // will return 1
+	
+	// Matrix m = Matrix("[[1,2,3],[3.5,10.2,77]")
+	// m.get(1,1) // will return 10.2
+	// m.get() - will return reference so you can change value using assigment
 };
 
 
