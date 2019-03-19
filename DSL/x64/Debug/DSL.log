@@ -1,0 +1,5 @@
+﻿  main.cpp
+C:\Users\skeez\source\repos\project\DSL\DSL\main.cpp(425): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\skeez\source\repos\project\DSL\DSL\main.cpp(301): warning C4715: declareVariable: значение возвращается не при всех путях выполнения
+C:\Users\skeez\source\repos\project\DSL\DSL\main.cpp(365): warning C4715: executeLine: значение возвращается не при всех путях выполнения
+  DSL.vcxproj -> C:\Users\skeez\source\repos\project\DSL\x64\Debug\DSL.exe

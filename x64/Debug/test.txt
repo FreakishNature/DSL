@@ -1,0 +1,5 @@
+SET Vector3 a = (1,2,3)
+SET Vector3 b = (1,2,3)
+SET Vector3 c = CALCULATE a + b
+CALCULATE c LENGTH
+COMPARE a == b

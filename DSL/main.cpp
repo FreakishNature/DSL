@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <stack>
 #include "Vector.h"
+#include "Matrix.h"
 #include <cctype>
 #include <locale>
 #include <unordered_map>
@@ -25,7 +26,7 @@ using namespace std;
 
 // COMMANDS
 
-//		DECLARE
+//		SET
 //		CALCULATE 
 //		PRINT
 //		COMPARE
@@ -44,14 +45,26 @@ using namespace std;
 
 // Syntax
 
-//		DECLARE Vector3 testVector (1,2,3)
+//		SET Vector3 testVector (1,2,3)
 //		PRINT testVector
 //		COMPARE testVector1 < testVector2 
 //		CALCULATE textVector1 + testVector2
-
+typedef int Matrix;
 
 map<string, shared_ptr<Vector>> vectorMap;
 map<string, shared_ptr<double>> doubleMap;
+map<string, shared_ptr<Matrix>> matrixMap;
+
+void findAndReplaceAll(std::string& data, std::string toSearch, std::string replaceStr)
+{
+	size_t pos = data.find(toSearch);
+
+	while (pos != std::string::npos)
+	{
+		data.replace(pos, toSearch.size(), replaceStr);
+		pos = data.find(toSearch, pos + replaceStr.size());
+	}
+}
 
 static inline void ltrim(std::string& s) {
 	s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
@@ -113,96 +126,85 @@ string removeWhiteSpaces(string str) {
 	str.erase(new_end, str.end());
 	return str;
 }
-std::vector<std::string> split(const std::string & txt, char ch)
-{
-	size_t pos = txt.find(ch);
-	size_t initialPos = 0;
-	std::vector<std::string> strs;
 
-	// Decompose statement
-	while (pos != std::string::npos) {
-		strs.push_back(txt.substr(initialPos, pos - initialPos));
-		initialPos = pos + 1;
-
-		pos = txt.find(ch, initialPos);
-	}
-
-	// Add the last one
-	strs.push_back(txt.substr(initialPos, std::min(pos, txt.size()) - initialPos + 1));
-
-	return strs;
-}
-
-shared_ptr<Vector> stringToVector2(string str) {
-	string subStr = str.substr(1, str.size() - 1);
-	auto points = split(subStr, ',');
-
-	if (points.size() < 2) {
-		return shared_ptr<Vector3>(nullptr);
-	}
-
-
-	return shared_ptr<Vector>(new Vector2(atof(points[0].c_str()), atof(points[1].c_str())));
-}
-shared_ptr<Vector> stringToVector3(string str) {
-	string subStr = str.substr(1, str.size() - 2);
-	auto points = split(subStr, ',');
-
-	if (points.size() < 3) {
-		return shared_ptr<Vector>(nullptr);
-	}
-
-
-	return shared_ptr<Vector>(new Vector3(atof(points[0].c_str()), atof(points[1].c_str()), atof(points[2].c_str())));
-}
 
 
 int calculateVariables(vector<string> args, string varName = "") {
 	shared_ptr<Vector> resultV = nullptr;
 	shared_ptr<double> resultD = nullptr;
 
+	// In operation operandA = vectorMap[args[1]] , creates an empty object with key args[1] 
+	bool foundA = false;
+	bool foundB = false;
+
+	shared_ptr<Vector> operandA;
+	shared_ptr<Vector> operandB;
+
+	vector<string> dataTypes = { "Vector2" , "Vector3" }; // TO think about Number type
+	// Deteterminating type of variables
+	for (string type : dataTypes) {
+		if (args[1].find(type) != string::npos) {
+			operandA = type == "Vector2" ? Vector2::parseVector(args[1]) : Vector3::parseVector(args[1]);
+			foundA = true;
+		}
+		if(args.size() > 2)
+		if (args[3].find(type) != string::npos) {
+			operandB = type == "Vector2" ? Vector2::parseVector(args[3]) : Vector3::parseVector(args[3]);
+			foundB = true;
+		}
+	}
+	if (!foundA) {
+		operandA = vectorMap[args[1]];
+	}
+	if (args.size() > 3 && !foundB)
+		operandB = vectorMap[args[3]];
+
 	for (auto& c : args[2]) c = toupper(c);
 
-	if (args[2] == "+") {
-		resultV = vectorMap[args[1]]->add(vectorMap[args[3]]);
+	// Detecting operationg and calculating
+	{
+		if (args[2] == "+") {
+			resultV = operandA->add(operandB);
+		}
+		else if (args[2] == "-") {
+			resultV = operandA->substr(operandB);
+		}
+		else if (args[2] == "DOT") {
+			resultD = operandA->scalarMult(operandB);
+		}
+		else if (args[2] == "CROSS") {
+			resultV = operandA->crossProd(operandB);
+		}
+		else if (args[2] == "LENGTH") {
+			resultD = operandA->length();
+		}
+		else if (args[2] == "DIST") {
+			resultD = operandA->dist(operandB);
+		}
+		else if (args[2] == "DIR") {
+			resultD = operandA->direction(operandB);
+		}
+		else if (args[2] == "ANGLE") {
+			resultD = operandA->angle(operandB);
+		}
 	}
-	else if (args[2] == "-") {
-		vectorMap[varName] = vectorMap[args[1]]->substr(vectorMap[args[3]]);
+	// Printing result
+	{
+		if (resultV) {
+			if (varName != "") vectorMap[varName] = resultV;
+			cout << " Ans =	";
+			resultV->print();
+			cout << endl;
+			return 0;
+		}
+		else if (resultD) {
+			if (varName != "") doubleMap[varName] = resultD;
+			cout << " Ans = " << *resultD;
+			cout << endl;
+			return 0;
+		}
 	}
-	else if (args[2] == "DOT") {
-		resultD = vectorMap[args[1]]->scalarMult(vectorMap[args[3]]);
-	}
-	else if (args[2] == "CROSS") {
-		resultV = vectorMap[args[1]]->crossProd(vectorMap[args[3]]);
-	}
-	else if (args[2] == "LENGTH") {
-		resultD = vectorMap[args[1]]->length();
-	}
-	else if (args[2] == "DIST") {
-		resultD = vectorMap[args[1]]->dist(vectorMap[args[3]]);
-	}
-	else if (args[2] == "DIR") {
-		resultD = vectorMap[args[1]]->direction(vectorMap[args[3]]);
-	}
-	else if (args[2] == "ANGLE") {
-		resultD = vectorMap[args[1]]->angle(vectorMap[args[3]]);
-	}
-
-
-	if (resultV) {
-		if (varName != "") vectorMap[varName] = resultV;
-
-		cout << " Ans =	";
-		resultV->print();
-		cout << endl;
-		return 0;
-	}
-	else if (resultD) {
-		if (varName != "") doubleMap[varName] = resultD;
-		cout << " Ans = " << *resultD;
-		cout << endl;
-		return 0;
-	}
+	
 
 
 
@@ -285,7 +287,6 @@ int declareVariable(vector<string> args) {
 		doubleMap[*varNameIt] = shared_ptr<double>(new double(atof(varDataIt->c_str())));
 		return 0;
 	}
-
 	else {
 		return -5;
 	}
@@ -342,7 +343,7 @@ int executeLine(string line) {
 
 	for (auto& c : args[0]) c = toupper(c);
 
-	if (args[0] == "DECLARE") {
+	if (args[0] == "SET") {
 		int codeResult = declareVariable(args);
 		if (codeResult < 0) { cout << "error code : " << codeResult << endl; }
 	}
@@ -362,7 +363,6 @@ int executeLine(string line) {
 
 
 int main(int argc, char** argv) {
-
 	if (argc < 2) {
 		while (true) {
 			string line;
@@ -392,8 +392,7 @@ int main(int argc, char** argv) {
 	}
 
 
+
 	return 0;
 }
 
-
-// PRINT "hey " variable "  dsda "

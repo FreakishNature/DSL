@@ -2,6 +2,16 @@
 
 
 
+shared_ptr<Vector> Vector2::parseVector(string str)
+{	
+	int pos = str.find("Vector2");
+	if (pos != string::npos) {
+		return stringToVector2(string(next(str.begin(), 7), str.end()));
+	}
+
+	return nullptr;
+}
+
 shared_ptr<double> Vector2::dist(shared_ptr<Vector> v)
 {
 	if (v->getType() != "Vector2") {
@@ -96,6 +106,15 @@ shared_ptr<double> Vector2::angle(shared_ptr<Vector> v)
 	return shared_ptr<double>(new double(acos(dotP / (v1 * v2)) * 180 / PI));
 }
 
+shared_ptr<Vector> Vector3::parseVector(string str)
+{
+	int pos = str.find("Vector3");
+	if (pos != string::npos) {
+		return stringToVector3(string(next(str.begin(), 7), str.end()));
+	}
+
+}
+
 shared_ptr<double> Vector3::dist(shared_ptr<Vector> v)
 {
 	if (v->getType() != "Vector3") {
@@ -183,3 +202,48 @@ shared_ptr<double> Vector3::angle(shared_ptr<Vector> v)
 	return shared_ptr<double>();
 }
 
+std::vector<std::string> split(const std::string& txt, char ch)
+{
+	size_t pos = txt.find(ch);
+	size_t initialPos = 0;
+	std::vector<std::string> strs;
+
+	// Decompose statement
+	while (pos != std::string::npos) {
+		strs.push_back(txt.substr(initialPos, pos - initialPos));
+		initialPos = pos + 1;
+
+		pos = txt.find(ch, initialPos);
+	}
+
+	// Add the last one
+	strs.push_back(txt.substr(initialPos, std::min(pos, txt.size()) - initialPos + 1));
+
+	return strs;
+}
+
+shared_ptr<Vector> stringToVector2(string str)
+{
+	string subStr = str.substr(1, str.size() - 1);
+	auto points = split(subStr, ',');
+
+	if (points.size() < 2) {
+		return shared_ptr<Vector3>(nullptr);
+	}
+
+
+	return shared_ptr<Vector>(new Vector2(atof(points[0].c_str()), atof(points[1].c_str())));
+}
+
+shared_ptr<Vector> stringToVector3(string str)
+{
+	string subStr = str.substr(1, str.size() - 2);
+	auto points = split(subStr, ',');
+
+	if (points.size() < 3) {
+		return shared_ptr<Vector>(nullptr);
+	}
+
+
+	return shared_ptr<Vector>(new Vector3(atof(points[0].c_str()), atof(points[1].c_str()), atof(points[2].c_str())));
+}
