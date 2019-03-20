@@ -122,16 +122,24 @@ double& Matrix::operator[](string strIndeces)
 
 Matrix::Matrix(string matrix)
 {
-	dimensions = getMatrixDimensions(matrix);
-	this->matrix.resize(dimensions[1]);
-	for (vector<double>& row : this->matrix) {
-		row.resize(dimensions[0]);
-	}
-	auto numbers = getMatrixNumbers(matrix);
-	for (int i = 0; i < this->matrix.size(); i++) {
-		for (int j = 0; j < this->matrix[i].size(); j++) {
-			int index = i * this->matrix[j].size() + j;
-			this->matrix[i][j] = numbers[index];
-		}
-	}
+    dimensions = getMatrixDimensions(matrix);
+    this->matrix.resize(dimensions[1]);
+    for (vector<double>& row : this->matrix) {
+        row.resize(dimensions[0]);
+    }
+    auto numbers = getMatrixNumbers(matrix);
+    for (int i = 0; i < this->matrix.size(); i++) {
+        for (int j = 0; j < this->matrix[i].size(); j++) {
+            int index = i * this->matrix[j].size() + j;
+            this->matrix[i][j] = numbers[index];
+        }
+    }
+}
+Matrix::Matrix(int n , int m)
+{
+    dimensions = getMatrixDimensions(matrix);
+    this->matrix.resize(n);
+    for (vector<double>& row : this->matrix) {
+        row.resize(m);
+    }
 }
