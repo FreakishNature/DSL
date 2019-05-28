@@ -22,17 +22,24 @@ public:
 	double& get(int i, int j) {
 		return matrix[i][j];
 	}
-    Matrix product(Matrix m){
-  
-        for(int i = 0; i < matrix.size(); i++){
-            for(int j = 0; j < matrix[i].size(); j++){
-                get(i,j) * m.get(i,j);
-            }        
-        }
-    }
-    
-	double& operator[](string strIndeces);
+	shared_ptr<Matrix> product(shared_ptr<Matrix> m);
 
+	shared_ptr<Matrix> minor(int row, int column) {
+		shared_ptr<Matrix> m(new Matrix(this->matrix.size() - 1, this->matrix.size() - 1));
+
+		for (int i = 0; i < this->matrix.size(); i++)
+			for (int j = 0; i != row && j < this->matrix[i].size(); j++)
+				if (j != column)
+					m->get(i < row ? i : i - 1, j < column ? j : j - 1) = this->matrix[i][j];
+		return m;
+	}
+	shared_ptr<Matrix> scalarMult(double n);
+	shared_ptr<Matrix> substraction(shared_ptr<Matrix> m);
+	shared_ptr<Matrix> addition(shared_ptr<Matrix> m);
+	
+
+	double& operator[](string strIndeces);
+	void print();
     Matrix(string matrix);
     Matrix(int n,int m);
     

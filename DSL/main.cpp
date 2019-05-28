@@ -3,14 +3,14 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <memory>
 #include <algorithm>
+#include <sstream>
 #include <stack>
-#include "Vector.h"
-#include "Matrix.h"
 #include <cctype>
 #include <locale>
+#include "CalculateFunctions.h"
 #include <unordered_map>
+#include "CalculateExpression.h"
 using namespace std;
 
 // VARIABLE DECLARATION CONTROL (IF IN DOUBLE MAP SHOULD NOT BE IN VECTOR MAP, CHECK NAME DECLARATION )
@@ -49,11 +49,36 @@ using namespace std;
 //		PRINT testVector
 //		COMPARE testVector1 < testVector2 
 //		CALCULATE textVector1 + testVector2
-typedef int Matrix;
-
 map<string, shared_ptr<Vector>> vectorMap;
-map<string, shared_ptr<double>> doubleMap;
+map<string, shared_ptr<double>> numberMap;
 map<string, shared_ptr<Matrix>> matrixMap;
+
+
+vector<string> calculateExpr(vector<string> args) {
+	string expr;
+	for (int i = 1; i < args.size(); i++) {
+		expr.append(args[i] + " ");
+	}
+	string res = calculateExpr(expr);
+	args = { "CALCULATE","0", "+",res };
+
+	return args;
+}
+
+
+string getVariableType(string variable) {
+	if (vectorMap.find(variable) != vectorMap.end()) {
+		return "Vector";
+	}
+	else if(numberMap.find(variable) != numberMap.end() || is_number(variable)) {
+		return "Number";
+	} 
+	else if(matrixMap.find(variable) != matrixMap.end()) {
+		return "Matrix";
+	} 
+
+	throw - 10; // Variable not found
+}
 
 void findAndReplaceAll(std::string& data, std::string toSearch, std::string replaceStr)
 {
@@ -129,87 +154,154 @@ string removeWhiteSpaces(string str) {
 
 
 
+
 int calculateVariables(vector<string> args, string varName = "") {
-	shared_ptr<Vector> resultV = nullptr;
-	shared_ptr<double> resultD = nullptr;
-
-	// In operation operandA = vectorMap[args[1]] , creates an empty object with key args[1] 
-	bool foundA = false;
-	bool foundB = false;
-
-	shared_ptr<Vector> operandA;
-	shared_ptr<Vector> operandB;
-
-	vector<string> dataTypes = { "Vector2" , "Vector3" }; // TO think about Number type
-	// Deteterminating type of variables
-	for (string type : dataTypes) {
-		if (args[1].find(type) != string::npos) {
-			operandA = type == "Vector2" ? Vector2::parseVector(args[1]) : Vector3::parseVector(args[1]);
-			foundA = true;
-		}
-		if(args.size() > 2)
-		if (args[3].find(type) != string::npos) {
-			operandB = type == "Vector2" ? Vector2::parseVector(args[3]) : Vector3::parseVector(args[3]);
-			foundB = true;
-		}
+	string operandA = args[1];
+	string operandB = args[3];
+	// NUMBER proccesing
+	shared_ptr<double> operandADouble(nullptr);
+	if (isFloat(operandA)) {
+		operandADouble = shared_ptr <double>(new double(atof(operandA.c_str())));
 	}
-	if (!foundA) {
-		operandA = vectorMap[args[1]];
-	}
-	if (args.size() > 3 && !foundB)
-		operandB = vectorMap[args[3]];
 
-	for (auto& c : args[2]) c = toupper(c);
+	shared_ptr<double> operandBDouble(nullptr);
+	if (isFloat(operandB)) {
+		operandBDouble = shared_ptr <double>(new double(atof(operandB.c_str())));
+	}
 
-	// Detecting operationg and calculating
-	{
-		if (args[2] == "+") {
-			resultV = operandA->add(operandB);
-		}
-		else if (args[2] == "-") {
-			resultV = operandA->substr(operandB);
-		}
-		else if (args[2] == "DOT") {
-			resultD = operandA->scalarMult(operandB);
-		}
-		else if (args[2] == "CROSS") {
-			resultV = operandA->crossProd(operandB);
-		}
-		else if (args[2] == "LENGTH") {
-			resultD = operandA->length();
-		}
-		else if (args[2] == "DIST") {
-			resultD = operandA->dist(operandB);
-		}
-		else if (args[2] == "DIR") {
-			resultD = operandA->direction(operandB);
-		}
-		else if (args[2] == "ANGLE") {
-			resultD = operandA->angle(operandB);
-		}
+	if (numberMap.find(operandA) != numberMap.end()) {
+		operandADouble = numberMap[operandA];
 	}
-	// Printing result
-	{
-		if (resultV) {
-			if (varName != "") vectorMap[varName] = resultV;
-			cout << " Ans =	";
-			resultV->print();
-			cout << endl;
-			return 0;
-		}
-		else if (resultD) {
-			if (varName != "") doubleMap[varName] = resultD;
-			cout << " Ans = " << *resultD;
-			cout << endl;
-			return 0;
-		}
+
+	if (numberMap.find(operandB) != numberMap.end()) {
+		operandBDouble = numberMap[operandB];
 	}
+
+	if (operandBDouble && operandADouble) {
+		calculateNumbers(args,*operandADouble, *operandBDouble,args[2],varName);
+	}
+
+	// VECTOR proccessing
+
+	if (args[1].find("Vector") != string::npos ||
+		vectorMap.find(args[1]) != vectorMap.end() &&
+		args[3].find("Vector") != string::npos &&
+		vectorMap.find(args[3]) != vectorMap.end()) {
+
+		calculateVectors(args, varName);
+		return 0;
+	}
+
+
+	if (operandBDouble) {
+		double number = *operandBDouble;
+		shared_ptr<Vector> v(nullptr);
+
+		vector<string> dataTypes = { "Vector2" , "Vector3" }; // TO think about Number type
+		// Deteterminating type of variables
+		for (string type : dataTypes) {
+			if (args[1].find(type) != string::npos) {
+				v = type == "Vector2" ? Vector2::parseVector(args[1]) : Vector3::parseVector(args[1]);
+			}
+		}
+
+		if (vectorMap.find(operandA) != vectorMap.end()) {
+			// not foun
+			v = vectorMap[operandA];
+		}
+
+
+
+		if (v) {
+			calculateNumberVector(args, number, v, args[2], varName);
+		}
+
+	}
+
+	if (operandADouble) {
+		double number = *operandADouble;
+		shared_ptr<Vector> v(nullptr);
+
+		vector<string> dataTypes = { "Vector2" , "Vector3" }; // TO think about Number type
+		// Deteterminating type of variables
+		for (string type : dataTypes) {
+			if (args.size() > 2)
+				if (args[3].find(type) != string::npos) {
+					v = type == "Vector2" ? Vector2::parseVector(args[3]) : Vector3::parseVector(args[3]);
+				}
+
+		}
+
+		if (vectorMap.find(operandB) != vectorMap.end()) {
+			v = vectorMap[operandB];
+		}
+
+		if (v) {
+			calculateNumberVector(args, number, v, args[2], varName);
+		}
+
+
+	}
+
+	if (
+		(
+			args[1].find("Vector") != string::npos ||
+			vectorMap.find(args[1]) != vectorMap.end()
+		) &&
+		(
+			args[3].find("Vector") != string::npos ||
+			vectorMap.find(args[3]) != vectorMap.end())
+		) {
+		
+		calculateVectors(args, varName);
+		return 0;
+	}
+	// Matrix proccesing
 	
 
+	if (operandADouble) {
+		double number = *operandADouble;
+		shared_ptr<Matrix> m(nullptr);
+
+		if (matrixMap.find(operandB) != matrixMap.end()) {
+			// not foun
+			m = matrixMap[operandB];
+
+			calculateNumberMatrix(args, number, m, args[2], varName);
+		}
+	}
+
+	if (operandBDouble) {
+		double number = *operandBDouble;
+		shared_ptr<Matrix> m(nullptr);
+
+		if (matrixMap.find(operandA) != matrixMap.end()) {
+			// not foun
+			m = matrixMap[operandA];
+
+			calculateNumberMatrix(args, number, m, args[2], varName);
+		}
 
 
-	return -6;
+	}
+
+	if (matrixMap.find(operandA) != matrixMap.end() && matrixMap.find(operandB) != matrixMap.end()) {
+		calculateMatrices(args, varName);
+	}
+	/*
+	string resultType = args[0];
+
+	string typeOperandA = getVariableType(args[1]);
+	string typeOperandB = getVariableType(args[3]);
+
+	if (typeOperandA == typeOperandB && typeOperandA == "Vector") { calculateVectors(args, varName); }
+	if (typeOperandA == typeOperandB && typeOperandA == "Number") { calculateNumbers(args, varName); }*/
+	
+	return 0;
 }
+
+
+
 int compareVectors(vector<string> args) {
 	if (args[2] == "==") {
 		if (*vectorMap[args[1]] == *vectorMap[args[3]]) {
@@ -277,6 +369,12 @@ int declareVariable(vector<string> args) {
 		calculateVariables(vector<string>(varDataIt, args.end()), *varNameIt);
 		return 0;
 	}
+
+	if (*varDataIt == "CALCULATEXPR") {
+		int codeResult = calculateVariables(calculateExpr(vector<string>(varDataIt, args.end())),*varNameIt);
+		return 0;
+	}
+
 	else if (args[1] == "Vector3") {
 		convertResult = stringToVector3(*varDataIt);
 	}
@@ -284,7 +382,11 @@ int declareVariable(vector<string> args) {
 		convertResult = stringToVector2(*varDataIt);
 	}
 	else if (args[1] == "Number") {
-		doubleMap[*varNameIt] = shared_ptr<double>(new double(atof(varDataIt->c_str())));
+		numberMap[*varNameIt] = shared_ptr<double>(new double(atof(varDataIt->c_str())));
+		return 0;
+	}
+	else if (args[1] == "Matrix") {
+		matrixMap[*varNameIt] = shared_ptr<Matrix>(new Matrix(*varDataIt));
 		return 0;
 	}
 	else {
@@ -309,7 +411,12 @@ int printVariable(vector<string> args, string command) {
 	vector<pair<string, bool>> dataToPrint;
 
 	for (string str : args) {
-		dataToPrint.push_back(make_pair(str, vectorMap.find(str) != vectorMap.end() || doubleMap.find(str) != doubleMap.end()));
+		dataToPrint.push_back(
+			make_pair(str, 
+				vectorMap.find(str) != vectorMap.end() || 
+				numberMap.find(str) != numberMap.end() ||
+				matrixMap.find(str) != matrixMap.end()
+			));
 	}
 
 
@@ -320,8 +427,11 @@ int printVariable(vector<string> args, string command) {
 			if (vectorMap.find(key) != vectorMap.end()) {
 				vectorMap[key]->print();
 			}
-			else if (doubleMap.find(key) != doubleMap.end()) {
-				cout << *doubleMap[key] << "  ";
+			else if (numberMap.find(key) != numberMap.end()) {
+				cout << *numberMap[key] << "  ";
+			}
+			else if (matrixMap.find(key) != matrixMap.end()) {
+				matrixMap[key]->print();
 			}
 		}
 		else {
@@ -336,7 +446,7 @@ int printVariable(vector<string> args, string command) {
 int executeLine(string line) {
 	string lineForArgs = trim(line);
 	//lineForArgs = removeWhiteSpaces(line);
-
+	
 	auto args = splitWithQuotes(lineForArgs);
 
 	if (args.size() < 2) { return -1; }
@@ -353,6 +463,10 @@ int executeLine(string line) {
 	}
 	else if (args[0] == "CALCULATE") {
 		int codeResult = calculateVariables(args);
+		if (codeResult < 0) { cout << "error code : " << codeResult << endl; }
+	}
+	else if (args[0] == "CALCULATEXPR") {
+		int codeResult = calculateVariables(calculateExpr(args));
 		if (codeResult < 0) { cout << "error code : " << codeResult << endl; }
 	}
 	else if (args[0] == "COMPARE") {
@@ -376,23 +490,35 @@ int main(int argc, char** argv) {
 
 		return 0;
 	}
-	string pathToFile = argv[1];
+	//string pathToFile = argv[1];
 
 
-	ifstream input(pathToFile);
-	vector<string> code;
-	//input >> std::noskipws;
+	//ifstream input(pathToFile);
+	//vector<string> code;
+	////input >> std::noskipws;
 
-	for (string line; getline(input, line);) {
-		//cout << line << endl;
-		code.push_back(line);
+	//for (string line; getline(input, line);) {
+	//	//cout << line << endl;
+	//	code.push_back(line);
+	//}
+	//for (string line : code) {
+	//	executeLine(line);
+	//}
+	try {
+		//Matrix m("[[1,2,2],[3,1,1]]");
+		//shared_ptr<Matrix> m2(new Matrix("[[4,2],[3,1],[1,5]]"));
+
+//		m.product(m2)->print();
+		//Matrix m("[[1,2,2],[3,1,1],[1,2,1]");
+		//shared_ptr<Matrix> m2(new Matrix("[[4,2],[3,1],[1,5]]"));
+
+		//m.minor(1,1)->print();
+//		cout << calculateExpr("35 * 2 - 4 * ( 55 - 53) ^ 2");
 	}
-	for (string line : code) {
-		executeLine(line);
+	catch (char c[]) {
+		cout << c << endl;
 	}
-
-
-
+	//m.print();
 	return 0;
 }
 

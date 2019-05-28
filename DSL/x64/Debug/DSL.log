@@ -1,5 +1,22 @@
-﻿  main.cpp
-C:\Users\skeez\source\repos\project\DSL\DSL\main.cpp(425): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
-C:\Users\skeez\source\repos\project\DSL\DSL\main.cpp(301): warning C4715: declareVariable: значение возвращается не при всех путях выполнения
-C:\Users\skeez\source\repos\project\DSL\DSL\main.cpp(365): warning C4715: executeLine: значение возвращается не при всех путях выполнения
+﻿  CalculateFunctions.cpp
+C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.h(28): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+  main.cpp
+C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.h(28): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(90): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(102): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(122): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(125): warning C4267: return: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(137): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(159): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(192): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Tools\MSVC\14.20.27508\include\utility(161): warning C4267: инициализация: преобразование из "size_t" в "_Ty1"; возможна потеря данных
+          with
+          [
+              _Ty1=int
+          ]
+  C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(161): note: выполняется компиляция ссылки на экземпляр шаблон функции "std::pair<int,char>::pair<unsigned __int64,char,0>(std::pair<unsigned __int64,char> &&) noexcept"
+  C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(161): note: выполняется компиляция ссылки на экземпляр шаблон функции "std::pair<int,char>::pair<unsigned __int64,char,0>(std::pair<unsigned __int64,char> &&) noexcept"
+  Создание кода...
+C:\Users\skeez\source\repos\project\DSL\DSL\main.cpp(400): warning C4715: declareVariable: значение возвращается не при всех путях выполнения
+C:\Users\skeez\source\repos\project\DSL\DSL\main.cpp(476): warning C4715: executeLine: значение возвращается не при всех путях выполнения
   DSL.vcxproj -> C:\Users\skeez\source\repos\project\DSL\x64\Debug\DSL.exe

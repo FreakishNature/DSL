@@ -43,7 +43,7 @@ shared_ptr<Vector> Vector2::substr(shared_ptr<Vector> v)
 	return shared_ptr<Vector>(new Vector2(this->x - convertedV->x, this->y - convertedV->y));
 }
 
-shared_ptr<double> Vector2::scalarMult(shared_ptr<Vector> v)
+shared_ptr<double> Vector2::dotMult(shared_ptr<Vector> v)
 {
 	if (v->getType() != "Vector2") {
 		return nullptr;
@@ -67,6 +67,11 @@ shared_ptr<double> Vector2::length()
 
 	double res = sqrt(pow(x, 2) + pow(y, 2));
 	return shared_ptr<double>(new double(res));
+}
+
+shared_ptr<Vector> Vector2::scalarMult(double n)
+{
+	return shared_ptr<Vector>(new Vector2(this->x * n, this->y * n));
 }
 
 shared_ptr<double> Vector2::direction(shared_ptr<Vector> v)
@@ -99,7 +104,7 @@ shared_ptr<double> Vector2::angle(shared_ptr<Vector> v)
 		return nullptr;
 	}
 
-	double  dotP = *scalarMult(v);
+	double  dotP = *dotMult(v);
 	double v1 = *this->length();
 	double v2 = *v->length();
 
@@ -146,13 +151,19 @@ shared_ptr<Vector> Vector3::substr(shared_ptr<Vector> v)
 	return shared_ptr<Vector>(new Vector3(this->x - convertedV->x, this->y - convertedV->y, this->z - convertedV->z));
 }
 
-shared_ptr<double> Vector3::scalarMult(shared_ptr<Vector> v)
+shared_ptr<double> Vector3::dotMult(shared_ptr<Vector> v)
 {
 	if (v->getType() != "Vector3") {
 		return nullptr;
 	}
+	shared_ptr<Vector3> convertedV = shared_ptr<Vector3>(std::dynamic_pointer_cast<Vector3>(v));
 
-	return shared_ptr<double>();
+	return shared_ptr<double>(new double(x * convertedV->x + y * convertedV->y + z * convertedV->z));
+}
+
+shared_ptr<Vector> Vector3::scalarMult(double n)
+{
+	return shared_ptr<Vector>(new Vector3(this->x * n, this->y * n, this->z * n));
 }
 
 shared_ptr<Vector> Vector3::crossProd(shared_ptr<Vector> v)
@@ -161,7 +172,15 @@ shared_ptr<Vector> Vector3::crossProd(shared_ptr<Vector> v)
 		return nullptr;
 	}
 
-	return shared_ptr<Vector>();
+	shared_ptr<Vector3> convertedV = shared_ptr<Vector3>(std::dynamic_pointer_cast<Vector3>(v));
+
+	return shared_ptr<Vector>(
+		new Vector3(
+			(this->y * convertedV->z) - (this->z * convertedV->y), 
+			(this->z * convertedV->x) - (this->x * convertedV->z), 
+			(this->x * convertedV->y) - (this->y * convertedV->x)
+		)
+	);
 }
 
 shared_ptr<double> Vector3::length()
@@ -199,7 +218,15 @@ shared_ptr<double> Vector3::direction(shared_ptr<Vector> v)
 
 shared_ptr<double> Vector3::angle(shared_ptr<Vector> v)
 {
-	return shared_ptr<double>();
+	if (v->getType() != "Vector3") {
+		return nullptr;
+	}
+
+	double  dotP = *dotMult(v); // aici e dotMult de la Vector3
+	double v1 = *this->length();
+	double v2 = *v->length();
+
+	return shared_ptr<double>(new double(acos(dotP / (v1 * v2)) * 180 / PI));
 }
 
 std::vector<std::string> split(const std::string& txt, char ch)

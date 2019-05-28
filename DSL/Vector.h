@@ -17,7 +17,8 @@ struct Vector {
 	virtual shared_ptr<double> dist(shared_ptr<Vector> v) { return nullptr; }
 	virtual shared_ptr<Vector> add(shared_ptr<Vector> v) { return nullptr; }
 	virtual shared_ptr<Vector> substr(shared_ptr<Vector> v) { return nullptr; }
-	virtual shared_ptr<double> scalarMult(shared_ptr<Vector> v) { return nullptr; }
+	virtual shared_ptr<double> dotMult(shared_ptr<Vector> v) { return nullptr; }
+	virtual shared_ptr<Vector> scalarMult(double n) { return nullptr; }
 	virtual shared_ptr<Vector> crossProd(shared_ptr<Vector> v) { return nullptr; }
 	virtual shared_ptr<double> length() { return nullptr; }
 	virtual shared_ptr<double> direction(shared_ptr<Vector> v) { return nullptr; }
@@ -105,9 +106,10 @@ public:
 	shared_ptr<double> dist(shared_ptr<Vector> v) override;
 	shared_ptr<Vector> add(shared_ptr<Vector> v)  override;
 	shared_ptr<Vector> substr(shared_ptr<Vector> v)  override;
-	shared_ptr<double> scalarMult(shared_ptr<Vector> v)  override;
+	shared_ptr<double> dotMult(shared_ptr<Vector> v)  override;
 	shared_ptr<Vector> crossProd(shared_ptr<Vector> v)  override;
 	shared_ptr<double> length() override;
+	shared_ptr<Vector> scalarMult(double n) override;
 	shared_ptr<double> direction(shared_ptr<Vector> v) override;
 	shared_ptr<double> angle(shared_ptr<Vector> v) override;
 
@@ -126,7 +128,8 @@ public:
 	shared_ptr<double> dist(shared_ptr<Vector> v) override;
 	shared_ptr<Vector> add(shared_ptr<Vector> v)  override;
 	shared_ptr<Vector> substr(shared_ptr<Vector> v)  override;
-	shared_ptr<double> scalarMult(shared_ptr<Vector> v)  override;
+	shared_ptr<double> dotMult(shared_ptr<Vector> v)  override;
+	shared_ptr<Vector> scalarMult(double n) override;
 	shared_ptr<Vector> crossProd(shared_ptr<Vector> v)  override;
 	shared_ptr<double> length() override;
 	shared_ptr<double> direction(shared_ptr<Vector> v) override;
