@@ -18,7 +18,7 @@ int calculateVectors(vector<string> args, string varName) {
 			operandA = type == "Vector2" ? Vector2::parseVector(args[1]) : Vector3::parseVector(args[1]);
 			foundA = true;
 		}
-		if (args.size() > 2) {
+		if (args.size() > 3) {
 			if (args[3].find(type) != string::npos) {
 				operandB = type == "Vector2" ? Vector2::parseVector(args[3]) : Vector3::parseVector(args[3]);
 				foundB = true;

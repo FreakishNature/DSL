@@ -157,7 +157,15 @@ string removeWhiteSpaces(string str) {
 
 int calculateVariables(vector<string> args, string varName = "") {
 	string operandA = args[1];
-	string operandB = args[3];
+	if (args.size() < 4) {
+		if (operandA.find("Vector") != std::string::npos || vectorMap.find(args[1]) != vectorMap.end()) {
+			return calculateVectors(args);
+		}
+		if (operandA.find("Matrix") != std::string::npos || matrixMap.find(args[1]) != matrixMap.end()) {
+			return calculateVectors(args);
+		}
+	}
+	string operandB = (args.size() > 3 ? args[3] : "");
 	// NUMBER proccesing
 	shared_ptr<double> operandADouble(nullptr);
 	if (isFloat(operandA)) {
@@ -490,6 +498,7 @@ int main(int argc, char** argv) {
 
 		return 0;
 	}
+
 	//string pathToFile = argv[1];
 
 
@@ -504,21 +513,10 @@ int main(int argc, char** argv) {
 	//for (string line : code) {
 	//	executeLine(line);
 	//}
-	try {
-		//Matrix m("[[1,2,2],[3,1,1]]");
-		//shared_ptr<Matrix> m2(new Matrix("[[4,2],[3,1],[1,5]]"));
+	Matrix m("[[[1,1.45,1]],[[1,1.45,1]]]");
+	auto p = m.getMatrixSize();
+	cout << p.first << "  " << p.second;
 
-//		m.product(m2)->print();
-		//Matrix m("[[1,2,2],[3,1,1],[1,2,1]");
-		//shared_ptr<Matrix> m2(new Matrix("[[4,2],[3,1],[1,5]]"));
-
-		//m.minor(1,1)->print();
-//		cout << calculateExpr("35 * 2 - 4 * ( 55 - 53) ^ 2");
-	}
-	catch (char c[]) {
-		cout << c << endl;
-	}
-	//m.print();
 	return 0;
 }
 

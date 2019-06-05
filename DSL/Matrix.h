@@ -9,6 +9,7 @@
 #include <regex>
 using namespace std;
 
+vector<string> getMatchesFromRegex(string line, regex expr);
 class Matrix {
 	vector<vector<double>> matrix;
 	vector<int> dimensions;
@@ -18,7 +19,7 @@ class Matrix {
 	vector<int> getMatrixIndeces(string line, int ignoreCharsAmount = 0, ...);
 	vector<double> getMatrixNumbers(string line);
 public:
-
+	pair<int, int> getMatrixSize() { return make_pair(matrix.size(), matrix[0].size()); }
 	double& get(int i, int j) {
 		return matrix[i][j];
 	}

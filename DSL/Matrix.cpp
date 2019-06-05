@@ -36,27 +36,25 @@ vector<int> Matrix::getMatrixDimensions(string line)
 {
 	vector<int> dimensions;
 	regex expr("\\[((\\d+(.\\d+)?),?)+\\]");
-	do {
-		std::vector<std::string> res;
-		for (std::sregex_iterator i = std::sregex_iterator(line.begin(), line.end(), expr);
-			i != std::sregex_iterator();
-			++i)
-		{
-			std::smatch m = *i;
-			res.push_back(m.str());
-		}
-
-		/*for (auto i : res) {
-			std::cout << i << std::endl;
-		}*/
-		dimensions.push_back(count_if(res[0].begin(), res[0].end(), [](char ch) { return ch == ','; }) + 1);
+	for (int i = 0; i < 2; i++) {
+		vector<string> matches = getMatchesFromRegex(line, expr);
+		dimensions.push_back(count_if(matches[0].begin(), matches[0].end(), [](char ch) { return ch == ','; }) + 1);
 		line = regex_replace(line, expr, "1");
-		//cout << line << endl;
-	} while (line.length() > 2);
-
-	if (dimensions.size() != 2) {
-		throw - 7;
 	}
+
+	/*
+		do {
+			vector<string> matches = getMatchesFromRegex(line, expr);
+			dimensions.push_back(count_if(matches[0].begin(), matches[0].end(), [](char ch) { return ch == ','; }) + 1);
+			line = regex_replace(line, expr, "1");
+
+		} while (line.length() > 2);
+
+		if (dimensions.size() != 2) {
+			throw - 7;
+		}
+	*/
+
 
 	return dimensions;
 }
@@ -224,3 +222,15 @@ Matrix::Matrix(int n, int m)
     }
 }
 
+vector<string> getMatchesFromRegex(string line, regex expr)
+{
+	std::vector<std::string> res;
+	for (std::sregex_iterator i = std::sregex_iterator(line.begin(), line.end(), expr);
+		i != std::sregex_iterator();
+		++i)
+	{
+		std::smatch m = *i;
+		res.push_back(m.str());
+	}
+	return res;
+}
