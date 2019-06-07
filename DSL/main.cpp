@@ -163,10 +163,10 @@ int calculateVariables(vector<string> args, string varName = "") {
 	string operandA = args[1];
 	if (args.size() < 4) {
 		if (operandA.find("Vector") != std::string::npos || vectorMap.find(args[1]) != vectorMap.end()) {
-			return calculateVectors(args);
+			return calculateVectors(args,varName);
 		}
 		if (operandA.find("Matrix") != std::string::npos || matrixMap.find(args[1]) != matrixMap.end()) {
-			return calculateVectors(args);
+			return calculateMatrices(args,varName);
 		}
 	}
 	string operandB = (args.size() > 3 ? args[3] : "");
@@ -296,10 +296,17 @@ int calculateVariables(vector<string> args, string varName = "") {
 
 
 	}
-
-	if (matrixMap.find(operandA) != matrixMap.end() && matrixMap.find(operandB) != matrixMap.end()) {
+	if (args[1].find("Matrix") != string::npos ||
+		matrixMap.find(args[1]) != matrixMap.end() &&
+		args[3].find("Matrix") != string::npos &&
+		matrixMap.find(args[3]) != matrixMap.end()) {
+		
 		calculateMatrices(args, varName);
+
+		return 0;
 	}
+
+	
 	/*
 	string resultType = args[0];
 
