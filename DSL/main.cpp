@@ -35,6 +35,10 @@ using namespace std;
 
 // + - CROSS DOT ANGLE DIR LENGTH DIST
 
+// CALCULATE Matrix OPERATIONS
+
+// * POWER + - DET PROD TRACE TRANSP
+
 // COMPARE OPERATIONS
 
 // <= >= < > != ==
@@ -498,24 +502,27 @@ int main(int argc, char** argv) {
 
 		return 0;
 	}
+	string pathToFile = argv[1];
 
-	//string pathToFile = argv[1];
 
+	ifstream input(pathToFile);
+	vector<string> code;
+	//input >> std::noskipws;
 
-	//ifstream input(pathToFile);
-	//vector<string> code;
-	////input >> std::noskipws;
-
-	//for (string line; getline(input, line);) {
-	//	//cout << line << endl;
-	//	code.push_back(line);
-	//}
-	//for (string line : code) {
-	//	executeLine(line);
-	//}
-	Matrix m("[[[1,1.45,1]],[[1,1.45,1]]]");
-	auto p = m.getMatrixSize();
-	cout << p.first << "  " << p.second;
+	for (string line; getline(input, line);) {
+		//cout << line << endl;
+		code.push_back(line);
+	}
+	for (string line : code) {
+		executeLine(line);
+	}
+	//Matrix m("[[4,2,3],[1,1,7],[3,11,33]]");
+	//Matrix m2("[[4,2],[1,3]]");
+	//auto p = m.getMatrixSize();
+	//m.print();
+	////cout << p.first << "  " << p.second;
+	//m.transpose()->print();
+	//m.power(1)->print();
 
 	return 0;
 }

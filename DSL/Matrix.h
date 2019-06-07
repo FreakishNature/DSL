@@ -34,11 +34,14 @@ public:
 					m->get(i < row ? i : i - 1, j < column ? j : j - 1) = this->matrix[i][j];
 		return m;
 	}
+	shared_ptr<double> determinant(vector< vector<double>> mat);
+	shared_ptr<double> determinant();
 	shared_ptr<Matrix> scalarMult(double n);
 	shared_ptr<Matrix> substraction(shared_ptr<Matrix> m);
 	shared_ptr<Matrix> addition(shared_ptr<Matrix> m);
-	
-
+	shared_ptr<Matrix> transpose();
+	shared_ptr<double> trace();
+	shared_ptr<Matrix> power(double n);
 	double& operator[](string strIndeces);
 	void print();
     Matrix(string matrix);

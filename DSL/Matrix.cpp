@@ -35,25 +35,12 @@ std::vector<std::string> Matrix::split(const std::string& txt, char ch)
 vector<int> Matrix::getMatrixDimensions(string line)
 {
 	vector<int> dimensions;
-	regex expr("\\[((\\d+(.\\d+)?),?)+\\]");
+	regex expr("\\[((-?\\d+(.-?\\d+)?),?)+\\]");
 	for (int i = 0; i < 2; i++) {
 		vector<string> matches = getMatchesFromRegex(line, expr);
 		dimensions.push_back(count_if(matches[0].begin(), matches[0].end(), [](char ch) { return ch == ','; }) + 1);
 		line = regex_replace(line, expr, "1");
 	}
-
-	/*
-		do {
-			vector<string> matches = getMatchesFromRegex(line, expr);
-			dimensions.push_back(count_if(matches[0].begin(), matches[0].end(), [](char ch) { return ch == ','; }) + 1);
-			line = regex_replace(line, expr, "1");
-
-		} while (line.length() > 2);
-
-		if (dimensions.size() != 2) {
-			throw - 7;
-		}
-	*/
 
 
 	return dimensions;
@@ -128,6 +115,46 @@ shared_ptr<Matrix> Matrix::product(shared_ptr<Matrix> m)
 	return res;
 }
 
+
+shared_ptr<double> Matrix::determinant(vector< vector<double>> mat)
+{
+	double d = 0;
+	int c, subi, i, j, subj;
+	vector< vector<double>> submat(mat.size() - 1, vector<double>(mat.size() - 1));
+	if (mat.size() == 2)
+	{
+		return shared_ptr<double>(new double((mat[0][0] * mat[1][1]) - (mat[1][0] * mat[0][1])));
+	}
+	else
+	{
+		for (c = 0; c < mat.size(); c++)
+		{
+			subi = 0;
+			for (i = 1; i < mat.size(); i++)
+			{
+				subj = 0;
+				for (j = 0; j < mat.size(); j++)
+				{
+					if (j == c)
+					{
+						continue;
+					}
+					submat[subi][subj] = mat[i][j];
+					subj++;
+				}
+				subi++;
+			}
+			d = d + (pow(-1, c) * mat[0][c] * *determinant(submat));
+		}
+	}
+	return shared_ptr<double>(new double(d));
+}
+
+shared_ptr<double> Matrix::determinant()
+{
+	return determinant(matrix);
+}
+
 shared_ptr<Matrix> Matrix::scalarMult(double n)
 {
 	shared_ptr<Matrix> res(new Matrix(matrix.size(), matrix[0].size()));
@@ -175,6 +202,49 @@ shared_ptr<Matrix> Matrix::addition(shared_ptr<Matrix> m)
 
 	return res;
 }
+shared_ptr<Matrix> Matrix::transpose()
+{
+	shared_ptr<Matrix> transpose(new Matrix(this->matrix.size(), this->matrix[0].size()));
+	for (int i = 0; i < this->matrix.size(); i++) {
+		for (int j = 0; j < this->matrix[0].size(); j++) {
+			transpose->get(j,i) = get(i, j);
+		}
+	}
+	return transpose;
+}
+
+shared_ptr<double> Matrix::trace()
+{
+	if (matrix.size() != matrix[0].size()) {
+		//	throw error;
+	}
+
+	double sum = 0;
+	for (int i = 0; i < this->matrix.size(); i++)
+		sum += get(i, i);
+
+	return shared_ptr<double>(new double(sum));
+}
+
+shared_ptr<Matrix> Matrix::power(double n)
+{
+	shared_ptr<Matrix> m;
+	shared_ptr<Matrix> copy(new Matrix(this->matrix.size(), this->matrix[0].size()));
+	for (int i = 0; i < this->matrix.size(); i++) {
+		for (int j = 0; j < this->matrix[0].size(); j++) {
+			copy->get(i,j) = get(i, j);
+		}
+	}
+	m = this->product(copy);
+	for (int nr = 2; nr <= n; nr++) {
+		m = m->product(copy);
+	}
+
+	return m;
+}
+
+
+
 double& Matrix::operator[](string strIndeces)
 {
 	auto indeces = getMatrixIndeces(strIndeces);

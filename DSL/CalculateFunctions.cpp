@@ -27,11 +27,18 @@ int calculateVectors(vector<string> args, string varName) {
 	}
 
 	if (!foundA) {
+		if (vectorMap.find(args[1]) == vectorMap.end()) {
+			throw - 13;
+		}
 		operandA = vectorMap[args[1]];
 	}
-	if (args.size() > 3 && !foundB)
+	if (args.size() > 3 && !foundB) {
+		if (vectorMap.find(args[3]) == vectorMap.end()) {
+			throw - 13;
+		}
 		operandB = vectorMap[args[3]];
-
+	}
+		
 	for (auto& c : args[2]) c = toupper(c);
 
 	// Detecting operationg and calculating
@@ -83,7 +90,85 @@ int calculateVectors(vector<string> args, string varName) {
 
 int calculateMatrices(vector<string> args, string varName)
 {
-	return 0;
+	shared_ptr<double> resultD;
+	shared_ptr<Matrix> resultM;
+
+	shared_ptr<Matrix> operandA;
+	shared_ptr<Matrix> operandB;
+	string type = "Matrix";
+	auto it = args[1].find(type);
+
+	bool foundA = false;
+	bool foundB = false;
+
+	if (it != string::npos) {
+		string tmpMatrix = args[1].substr(it + 7, args[1].size() - it - 8);
+		operandA = shared_ptr<Matrix>(new Matrix(tmpMatrix));
+		foundA = true;
+	}
+
+	if (args.size() > 3) {
+		it = args[3].find(type);
+
+		if (it != string::npos) {
+			string tmpMatrix = args[3].substr(it + 7, args[3].size() - it - 8);
+			operandB = shared_ptr<Matrix>(new Matrix(tmpMatrix));
+			foundB = true;
+		}
+	}
+
+	if (!foundA) {
+		if (matrixMap.find(args[1]) == matrixMap.end()) {
+			throw - 13;
+		}
+		operandA = matrixMap[args[1]];
+	}
+	
+	if (args.size() > 3 && !foundA) {
+		if (matrixMap.find(args[3]) == matrixMap.end()) {
+			throw - 13;
+		}
+		operandB = matrixMap[args[3]];
+	}
+
+	{
+		if (args[2] == "+") {
+			resultM = operandA->addition(operandB);
+		}
+		else if (args[2] == "-") {
+			resultM = operandA->substraction(operandB);
+		}
+		else if (args[2] == "DET") {
+			resultD = operandA->determinant();
+		}
+		else if (args[2] == "PROD") {
+			resultM = operandA->product(operandB);
+		}
+		else if (args[2] == "TRACE") {
+			resultD = operandA->trace();
+		}
+		else if (args[2] == "TRANSP") {
+			resultM = operandA->transpose();
+		}
+		
+	}
+	// Printing result
+	{
+		if (resultM) {
+			if (varName != "") matrixMap[varName] = resultM;
+			cout << " Ans =	";
+			resultM->print();
+			cout << endl;
+			return 0;
+		}
+		else if (resultD) {
+			if (varName != "") numberMap[varName] = resultD;
+			cout << " Ans = " << *resultD;
+			cout << endl;
+			return 0;
+		}
+	}
+	throw - 6;
 }
 
 bool isFloat(string myString) {
@@ -131,7 +216,6 @@ int calculateNumberVector(vector<string> args, double a, shared_ptr<Vector> b, s
 	if (operation == "*") {
 		 resultVector = b->scalarMult(a);
 	}
-
 	{
 		if (resultVector) {
 			if (varName != "") vectorMap[varName] = resultVector;
@@ -152,6 +236,31 @@ int calculateNumberVector(vector<string> args, double a, shared_ptr<Vector> b, s
 
 int calculateNumberMatrix(vector<string> args, double a, shared_ptr<Matrix> b, string operation, string varName)
 {
+	shared_ptr<Matrix> resultM;
+	shared_ptr<double> resultD;
+
+	if (args[2] == "*") {
+		resultM = b->scalarMult(a);
+	}
+	else if (args[2] == "POWER") {
+		resultM = b->power(a);
+	} 
+
+	{
+		if (resultM) {
+			if (varName != "") matrixMap[varName] = resultM;
+			cout << " Ans =	";
+			resultM->print();
+			cout << endl;
+			return 0;
+		}
+		else if (resultD) {
+			if (varName != "") numberMap[varName] = resultD;
+			cout << " Ans = " << *resultD;
+			cout << endl;
+			return 0;
+		}
+	}
 	return 0;
 }
 
