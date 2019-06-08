@@ -42,6 +42,12 @@ public:
 	shared_ptr<Matrix> transpose();
 	shared_ptr<double> trace();
 	shared_ptr<Matrix> power(double n);
+	shared_ptr<Matrix> inverse();
+	shared_ptr<Matrix> adjoint();
+	shared_ptr<Matrix> getCofactor(shared_ptr<Matrix> temp, int p, int q);
+
+
+
 	double& operator[](string strIndeces);
 	void print();
     Matrix(string matrix);

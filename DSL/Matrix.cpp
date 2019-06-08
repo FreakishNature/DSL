@@ -171,7 +171,7 @@ shared_ptr<Matrix> Matrix::substraction(shared_ptr<Matrix> m)
 
 {
 	if (this->matrix.size() != m->matrix.size() || this->matrix[0].size() != m->matrix[0].size()) {
-		cout << "Substraction is not possible "; // sau throw error
+		throw - 14;
 	}
 
 	shared_ptr<Matrix> res(new Matrix(matrix.size(), matrix[0].size()));
@@ -188,7 +188,7 @@ shared_ptr<Matrix> Matrix::substraction(shared_ptr<Matrix> m)
 shared_ptr<Matrix> Matrix::addition(shared_ptr<Matrix> m)
 {
 	if (this->matrix.size() != m->matrix.size() || this->matrix[0].size() != m->matrix[0].size()) {
-		cout << "Addition not possible "; // sau throw error
+		throw - 14;
 	}
 
 	shared_ptr<Matrix> res(new Matrix(matrix.size(), matrix[0].size()));
@@ -216,7 +216,7 @@ shared_ptr<Matrix> Matrix::transpose()
 shared_ptr<double> Matrix::trace()
 {
 	if (matrix.size() != matrix[0].size()) {
-		//	throw error;
+		throw - 13;
 	}
 
 	double sum = 0;
@@ -243,8 +243,78 @@ shared_ptr<Matrix> Matrix::power(double n)
 	return m;
 }
 
+shared_ptr<Matrix> Matrix::inverse()
+{
+	shared_ptr<Matrix> inverse(new Matrix(this->matrix.size(), this->matrix[0].size()));
+	shared_ptr<double> det = determinant();
+
+	if (det == 0)
+	{
+		throw - 16;//throw error that the matrix is singular 
+	}
+
+	shared_ptr<Matrix> adj(new Matrix(this->matrix.size(), this->matrix[0].size()));
+	adj = adjoint();
+//	adj->print();
+	for (int i = 0; i < this->matrix.size(); i++) {
+		for (int j = 0; j < this->matrix[0].size(); j++) {
+			inverse->get(i, j) = adj->get(i, j) / *det;
+		}
+	}
+	return inverse;
+}
 
 
+
+shared_ptr<Matrix> Matrix::adjoint()
+{
+	shared_ptr<Matrix> adj(new Matrix(this->matrix.size(), this->matrix[0].size()));
+	if (this->matrix.size() == 1)
+	{
+		adj->get(0, 0) = 1;
+		return adj;
+	}
+
+	shared_ptr<Matrix> temp(new Matrix(this->matrix.size() - 1, this->matrix[0].size() - 1));
+	int sign = 1;
+
+	for (int i = 0; i < this->matrix.size(); i++)
+	{
+		for (int j = 0; j < this->matrix.size(); j++)
+		{
+			temp = getCofactor(temp, i, j);
+
+			sign = ((i + j) % 2 == 0) ? 1 : -1;
+			double det = *determinant(temp->matrix);
+			adj->get(j, i) = (sign) * (det);
+		}
+	}
+	return adj->transpose();
+}
+
+shared_ptr<Matrix> Matrix::getCofactor(shared_ptr<Matrix> temp, int p, int q)
+{
+	int i = 0, j = 0;
+	for (int row = 0; row < this->matrix.size(); row++)
+	{
+		for (int col = 0; col < this->matrix.size(); col++)
+		{
+			if (row != p && col != q)
+			{
+				temp->get(i, j++) = matrix[row][col];
+
+				if (j == matrix.size() - 1)
+				{
+					j = 0;
+					i++;
+				}
+			}
+		}
+	}
+
+
+	return temp;
+}
 double& Matrix::operator[](string strIndeces)
 {
 	auto indeces = getMatrixIndeces(strIndeces);

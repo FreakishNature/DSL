@@ -17,12 +17,7 @@ using namespace std;
 
 // ERRORS CODE
 
-//		error -1 -- not enough arguments in line
-//		error -2 -- not enough arguments in declaring vector
-//		error -3 -- not enough arguments in printing vector
-//		error -4 -- syntax error
-//		error -5 -- no such type
-//		error -6 -- error in calculation
+map<int, string> errorMessages;
 
 // COMMANDS
 
@@ -307,15 +302,6 @@ int calculateVariables(vector<string> args, string varName = "") {
 	}
 
 	
-	/*
-	string resultType = args[0];
-
-	string typeOperandA = getVariableType(args[1]);
-	string typeOperandB = getVariableType(args[3]);
-
-	if (typeOperandA == typeOperandB && typeOperandA == "Vector") { calculateVectors(args, varName); }
-	if (typeOperandA == typeOperandB && typeOperandA == "Number") { calculateNumbers(args, varName); }*/
-	
 	return 0;
 }
 
@@ -373,13 +359,67 @@ int compareVectors(vector<string> args) {
 	return 0;
 
 }
+int compareMatrices(vector<string> args) {
+	if (args[2] == "==") {
+		if (matrixMap[args[1]]->determinant() == matrixMap[args[3]]->determinant()) {
+			cout << "TRUE" << endl;
+		}
+		else {
+			cout << "FALSE" << endl;
+		}
+	}
+	else if (args[2] == "<=") {
+		if (matrixMap[args[1]]->determinant() <= matrixMap[args[3]]->determinant()) {
+			cout << "TRUE" << endl;
+		}
+		else {
+			cout << "FALSE" << endl;
+		}
+	}
+	else if (args[2] == ">=") {
+		if (matrixMap[args[1]]->determinant() >= matrixMap[args[3]]->determinant()) {
+			cout << "TRUE" << endl;
+		}
+		else {
+			cout << "FALSE" << endl;
+		}
+	}
+	else if (args[2] == "<") {
+		if (matrixMap[args[1]]->determinant() < matrixMap[args[3]]->determinant()) {
+			cout << "TRUE" << endl;
+		}
+		else {
+			cout << "FALSE" << endl;
+		}
+	}
+	else if (args[2] == ">") {
+		if (matrixMap[args[1]]->determinant() > matrixMap[args[3]]->determinant()) {
+			cout << "TRUE" << endl;
+		}
+		else {
+			cout << "FALSE" << endl;
+		}
+	}
+	else if (args[2] == "!=") {
+		if (matrixMap[args[1]]->determinant() != matrixMap[args[3]]->determinant()) {
+			cout << "TRUE" << endl;
+		}
+		else {
+			cout << "FALSE" << endl;
+		}
+	}
+	return 0;
+
+}
+
+
 int declareVariable(vector<string> args) {
 	auto equalsSignIterator = find(args.begin(), args.end(), "=");
 
-	if (equalsSignIterator == args.end()) { return -4; }
+	if (equalsSignIterator == args.end()) { throw -4; }
 	auto varNameIt = prev(equalsSignIterator, 1);
 	auto varDataIt = next(equalsSignIterator, 1);
-	if (varDataIt == args.end() || varNameIt == args.end()) { return -4; }
+	if (varDataIt == args.end() || varNameIt == args.end()) { throw -4; }
 
 	shared_ptr<Vector> convertResult;
 	for (auto& c : *varDataIt) c = toupper(c);
@@ -409,11 +449,11 @@ int declareVariable(vector<string> args) {
 		return 0;
 	}
 	else {
-		return -5;
+		throw -5;
 	}
 
 	if (!convertResult) {
-		return -2;
+		throw -2;
 	}
 	vectorMap[*varNameIt] = convertResult;
 }
@@ -488,7 +528,13 @@ int executeLine(string line) {
 		int codeResult = calculateVariables(calculateExpr(args));
 		if (codeResult < 0) { cout << "error code : " << codeResult << endl; }
 	}
-	else if (args[0] == "COMPARE") {
+	else if (args[0] == "COMPAREV") {
+		compareVectors(args);
+	}
+	else if (args[0] == "COMPAREM") {
+		compareMatrices(args);
+	}
+	else if (args[0] == "COMPAREV") {
 		compareVectors(args);
 	}
 
@@ -496,6 +542,19 @@ int executeLine(string line) {
 
 
 int main(int argc, char** argv) {
+	errorMessages.emplace(make_pair(-1, "-1 -- not enough arguments in line"));
+	errorMessages.emplace(make_pair(-2, "-2 -- not enough arguments in declaring vector"));
+	errorMessages.emplace(make_pair(-3, "-3 -- not enough arguments in printing vector"));
+	errorMessages.emplace(make_pair(-4, "-4 -- syntax error"));
+	errorMessages.emplace(make_pair(-5, "-5 -- no such type"));
+	errorMessages.emplace(make_pair(-6, "-6 -- error in calculation"));
+	errorMessages.emplace(make_pair(-10, "-10 -- variable not found"));
+	errorMessages.emplace(make_pair(-11, "-11 -- operatopn not supported"));
+	errorMessages.emplace(make_pair(-16, "-16 -- matrix is singular "));
+	errorMessages.emplace(make_pair(-13, "-13 -- matrix is not rectangular"));
+	errorMessages.emplace(make_pair(-14, "-14 -- matrices have different shapes"));
+
+
 	if (argc < 2) {
 		while (true) {
 			string line;
@@ -504,7 +563,12 @@ int main(int argc, char** argv) {
 			if (line == "exit") {
 				break;
 			}
-			executeLine(line);
+			try {
+				executeLine(line);
+			}
+			catch (int e) {
+				cout << errorMessages[e] << endl;
+			}
 		}
 
 		return 0;
@@ -521,15 +585,13 @@ int main(int argc, char** argv) {
 		code.push_back(line);
 	}
 	for (string line : code) {
-		executeLine(line);
+		try {
+			executeLine(line);
+		}
+		catch (int e) {
+			cout << errorMessages[e];
+		}
 	}
-	//Matrix m("[[4,2,3],[1,1,7],[3,11,33]]");
-	//Matrix m2("[[4,2],[1,3]]");
-	//auto p = m.getMatrixSize();
-	//m.print();
-	////cout << p.first << "  " << p.second;
-	//m.transpose()->print();
-	//m.power(1)->print();
 
 	return 0;
 }

@@ -28,13 +28,13 @@ int calculateVectors(vector<string> args, string varName) {
 
 	if (!foundA) {
 		if (vectorMap.find(args[1]) == vectorMap.end()) {
-			throw - 13;
+			throw -10;
 		}
 		operandA = vectorMap[args[1]];
 	}
 	if (args.size() > 3 && !foundB) {
 		if (vectorMap.find(args[3]) == vectorMap.end()) {
-			throw - 13;
+			throw -10;
 		}
 		operandB = vectorMap[args[3]];
 	}
@@ -119,14 +119,14 @@ int calculateMatrices(vector<string> args, string varName)
 
 	if (!foundA) {
 		if (matrixMap.find(args[1]) == matrixMap.end()) {
-			throw - 13;
+			throw -10;
 		}
 		operandA = matrixMap[args[1]];
 	}
 	
 	if (args.size() > 3 && !foundA) {
 		if (matrixMap.find(args[3]) == matrixMap.end()) {
-			throw - 13;
+			throw -10;
 		}
 		operandB = matrixMap[args[3]];
 	}
@@ -150,7 +150,13 @@ int calculateMatrices(vector<string> args, string varName)
 		else if (args[2] == "TRANSP") {
 			resultM = operandA->transpose();
 		}
-		
+		else if (args[2] == "INVERSE") {
+			resultM = operandA->inverse();
+		}
+		else if (args[2] == "ADJOINT") {
+			resultM = operandA->adjoint();
+		}
+
 	}
 	// Printing result
 	{
@@ -261,7 +267,7 @@ int calculateNumberMatrix(vector<string> args, double a, shared_ptr<Matrix> b, s
 			return 0;
 		}
 	}
-	return 0;
+	throw -6;
 }
 
 bool is_number(const std::string& s) {

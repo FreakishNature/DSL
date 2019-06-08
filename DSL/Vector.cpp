@@ -59,7 +59,7 @@ shared_ptr<Vector> Vector2::crossProd(shared_ptr<Vector> v)
 		return nullptr;
 	}
 
-	return shared_ptr<Vector>();
+	throw -11;
 }
 
 shared_ptr<double> Vector2::length()
