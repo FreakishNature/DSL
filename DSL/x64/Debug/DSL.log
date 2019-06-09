@@ -1,26 +1,12 @@
-﻿  Matrix.cpp
+﻿  main.cpp
 C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.h(29): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.cpp(41): warning C4244: аргумент: преобразование "__int64" в "_Ty", возможна потеря данных
-          with
-          [
-              _Ty=int
-          ]
-C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.cpp(74): warning C4244: аргумент: преобразование "double" в "_Ty", возможна потеря данных
-          with
-          [
-              _Ty=int
-          ]
-C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.cpp(103): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.cpp(163): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.cpp(180): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.cpp(197): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.cpp(210): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.cpp(235): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.cpp(251): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.cpp(259): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.cpp(274): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.cpp(281): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-C:\Users\skeez\source\repos\project\DSL\DSL\Matrix.cpp(355): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(90): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(102): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(122): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(125): warning C4267: return: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(137): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(159): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\skeez\source\repos\project\DSL\DSL\CalculateExpression.h(192): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Tools\MSVC\14.20.27508\include\utility(161): warning C4267: инициализация: преобразование из "size_t" в "_Ty1"; возможна потеря данных
           with
           [
@@ -33,4 +19,6 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Tools\MSVC\14.20.
           [
               _Ty2=int
           ]
+C:\Users\skeez\source\repos\project\DSL\DSL\main.cpp(462): warning C4715: declareVariable: значение возвращается не при всех путях выполнения
+C:\Users\skeez\source\repos\project\DSL\DSL\main.cpp(544): warning C4715: executeLine: значение возвращается не при всех путях выполнения
   DSL.vcxproj -> C:\Users\skeez\source\repos\project\DSL\x64\Debug\DSL.exe

@@ -288,14 +288,15 @@ int calculateVariables(vector<string> args, string varName = "") {
 
 			calculateNumberMatrix(args, number, m, args[2], varName);
 		}
-
-
 	}
-	if (args[1].find("Matrix") != string::npos ||
-		matrixMap.find(args[1]) != matrixMap.end() &&
-		args[3].find("Matrix") != string::npos &&
-		matrixMap.find(args[3]) != matrixMap.end()) {
-		
+
+	
+	bool existFirstMatrix = (args[1].find("Matrix") != string::npos ||
+		matrixMap.find(args[1]) != matrixMap.end());
+	bool existSecondMatrix = (args[3].find("Matrix") != string::npos ||
+		matrixMap.find(args[3]) != matrixMap.end());
+
+	if ( existFirstMatrix && existSecondMatrix) {
 		calculateMatrices(args, varName);
 
 		return 0;
