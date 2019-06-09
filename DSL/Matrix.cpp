@@ -118,6 +118,9 @@ shared_ptr<Matrix> Matrix::product(shared_ptr<Matrix> m)
 
 shared_ptr<double> Matrix::determinant(vector< vector<double>> mat)
 {
+	if (mat.size() == 1) {
+		return shared_ptr<double>(new double(mat[0][0]));
+	}
 	double d = 0;
 	int c, subi, i, j, subj;
 	vector< vector<double>> submat(mat.size() - 1, vector<double>(mat.size() - 1));
@@ -236,7 +239,7 @@ shared_ptr<Matrix> Matrix::power(double n)
 		}
 	}
 	m = this->product(copy);
-	for (int nr = 2; nr <= n; nr++) {
+	for (int nr = 2; nr < n; nr++) {
 		m = m->product(copy);
 	}
 
@@ -261,7 +264,7 @@ shared_ptr<Matrix> Matrix::inverse()
 			inverse->get(i, j) = adj->get(i, j) / *det;
 		}
 	}
-	return inverse;
+	return inverse->transpose();
 }
 
 
